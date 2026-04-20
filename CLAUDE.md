@@ -27,6 +27,31 @@ Claude Code (Stop/SubagentStop hook)
 
 Arduino sketch and Claude Code hook script will live alongside these as the project grows.
 
+## First-time setup
+
+**Mac side:**
+```bash
+brew install mosquitto        # provides mosquitto_pub for the hook
+make up                       # start the broker
+```
+
+The hook wiring is already in `.claude/settings.json` and is picked up by Claude Code automatically.
+
+**Arduino side:**
+1. In the Arduino IDE install the **Arduino UNO R4 Boards** package and the **ArduinoMqttClient** and **FastLED** libraries.
+2. Copy `arduino/clauduino_led/arduino_secrets.h.example` to `arduino/clauduino_led/arduino_secrets.h` and fill in your WiFi SSID/password and the Mac's LAN IP (`ipconfig getifaddr en0`). The file is gitignored.
+3. Open `arduino/clauduino_led/clauduino_led.ino`, select board **Arduino UNO R4 WiFi**, and upload.
+
+## Hardware
+
+- Arduino Uno R4 WiFi
+- WS2812 / WS2812B LED strip, 46 LEDs, data on `D6`
+- 5 V PSU (≥ 3 A) for the strip, common ground with the Arduino
+- 220–470 Ω resistor in series on the data line, near the strip
+- 1000 µF electrolytic across the strip's 5V/GND, near LED #1
+
+Full wiring diagram, rationale for each passive, and a troubleshooting table are in [`docs/hardware.md`](docs/hardware.md).
+
 ## Running the broker
 
 `make help` lists all targets. Common ones:
@@ -62,6 +87,18 @@ docker run --rm eclipse-mosquitto:2.0 \
   -t 'clauduino/led/status' -m 'task_complete'
 ```
 
+## Triggering animations manually
+
+Useful for iterating on the Arduino firmware without waiting for real Claude events:
+
+```bash
+make trigger-stop        # rainbow chase ×3
+make trigger-subagent    # single cyan sweep
+make trigger-notify      # amber breathe ~5s
+```
+
+Each publishes to `clauduino/led/<event>` with an empty payload — the same message Claude's hook sends.
+
 ## Conventions
 
 - **Commits:** always create commits via the `/commit` skill rather than crafting commit messages by hand. It keeps message style consistent across the project.
@@ -69,5 +106,5 @@ docker run --rm eclipse-mosquitto:2.0 \
 ## Status
 
 - [x] Mosquitto broker in docker-compose, verified pub/sub round-trip
-- [ ] Claude Code hook script that publishes on task completion
-- [ ] Arduino sketch that subscribes and drives the LED strip
+- [x] Claude Code hooks (Stop / SubagentStop / Notification) publishing to MQTT
+- [x] Arduino sketch subscribing to `clauduino/led/#` and driving the strip
