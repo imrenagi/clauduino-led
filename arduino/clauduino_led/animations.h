@@ -32,5 +32,6 @@ private:
   uint8_t pass_ = 0;                 // used by chase animations
 
   void renderPlaceholder(CRGB color, unsigned long durationMs);
+  void renderStop();
   void clear_();
 };
