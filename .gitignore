@@ -9,6 +9,9 @@ mosquitto/log/
 .idea/
 *.swp
 
+# Arduino-specific files (secrets, credentials)
+arduino/clauduino_led/arduino_secrets.h
+
 .claude/skills/
 .agents/
 skills-lock.json
