@@ -1,6 +1,11 @@
 #include <WiFiS3.h>
 #include <ArduinoMqttClient.h>
+#include <FastLED.h>
 #include "arduino_secrets.h"
+#include "animations.h"
+
+static CRGB leds[NUM_LEDS];
+static AnimationEngine engine;
 
 static WiFiClient wifiClient;
 static MqttClient mqttClient(wifiClient);
@@ -33,36 +38,39 @@ static void connectMQTT() {
   Serial.print(SECRET_MQTT_HOST);
   Serial.print(':');
   Serial.println(SECRET_MQTT_PORT);
-
   while (!mqttClient.connect(SECRET_MQTT_HOST, SECRET_MQTT_PORT)) {
     Serial.print(F("MQTT: failed, error="));
     Serial.println(mqttClient.connectError());
     delay(3000);
   }
   Serial.println(F("MQTT: connected"));
-
   mqttClient.subscribe("clauduino/led/#");
   Serial.println(F("MQTT: subscribed to clauduino/led/#"));
 }
 
 static void onMqttMessage(int messageSize) {
-  String topic = mqttClient.messageTopic();
+  String topicStr = mqttClient.messageTopic();
+  while (mqttClient.available()) { mqttClient.read(); }  // drain payload
+
+  Event e = eventFromTopic(topicStr.c_str());
   Serial.print(F("MQTT rx: topic="));
-  Serial.print(topic);
-  Serial.print(F(" size="));
-  Serial.println(messageSize);
-  // Drain payload (we don't use it yet).
-  while (mqttClient.available()) {
-    mqttClient.read();
-  }
+  Serial.print(topicStr);
+  Serial.print(F(" event="));
+  Serial.println(static_cast<uint8_t>(e));
+
+  if (e != Event::None) engine.start(e);
 }
 
 void setup() {
   Serial.begin(115200);
   delay(1500);
   Serial.println(F("clauduino-led: boot"));
-  connectWiFi();
 
+  FastLED.addLeds<WS2812B, DATA_PIN, GRB>(leds, NUM_LEDS);
+  FastLED.setBrightness(96);          // conservative default; tune later
+  engine.begin(leds);
+
+  connectWiFi();
   mqttClient.onMessage(onMqttMessage);
   connectMQTT();
 }
@@ -71,4 +79,5 @@ void loop() {
   if (WiFi.status() != WL_CONNECTED) { connectWiFi(); }
   if (!mqttClient.connected())       { connectMQTT(); }
   mqttClient.poll();
+  engine.tick();
 }
