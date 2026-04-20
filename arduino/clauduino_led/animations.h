@@ -33,5 +33,6 @@ private:
 
   void renderPlaceholder(CRGB color, unsigned long durationMs);
   void renderStop();
+  void renderSubagentStop();
   void clear_();
 };

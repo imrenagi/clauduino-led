@@ -79,11 +79,39 @@ void AnimationEngine::renderStop() {
   }
 }
 
+// SubagentStop: single cyan comet, one pass, dimmer than Stop.
+void AnimationEngine::renderSubagentStop() {
+  constexpr uint16_t STEP_MS     = 20;
+  constexpr uint8_t  COMET_LEN   = 6;
+  constexpr uint8_t  HEAD_BRIGHT = 180;  // softer than Stop's 255
+
+  unsigned long now = millis();
+  if (now - lastStep_ < STEP_MS) return;
+  lastStep_ = now;
+
+  fill_solid(leds_, NUM_LEDS, CRGB::Black);
+
+  for (uint8_t i = 0; i < COMET_LEN; ++i) {
+    int16_t idx = (int16_t)step_ - (int16_t)i;
+    if (idx < 0 || idx >= NUM_LEDS) continue;
+    uint8_t brightness = HEAD_BRIGHT - (i * (HEAD_BRIGHT / COMET_LEN));
+    leds_[idx] = CHSV(128, 255, brightness);  // hue 128 ≈ cyan
+  }
+  FastLED.show();
+
+  step_++;
+  if (step_ >= NUM_LEDS + COMET_LEN) {
+    clear_();
+    FastLED.show();
+    current_ = Event::None;
+  }
+}
+
 void AnimationEngine::tick() {
   if (current_ == Event::None) return;
   switch (current_) {
     case Event::Stop:          renderStop(); break;
-    case Event::SubagentStop:  renderPlaceholder(CRGB::Cyan,   1000); break;
+    case Event::SubagentStop:  renderSubagentStop(); break;
     case Event::Notification:  renderPlaceholder(CRGB::Orange, 1000); break;
     default: break;
   }
