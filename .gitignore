@@ -1,0 +1,14 @@
+.DS_Store
+.env
+.env.local
+
+mosquitto/data/
+mosquitto/log/
+
+.vscode/
+.idea/
+*.swp
+
+.claude/skills/
+.agents/
+skills-lock.json
