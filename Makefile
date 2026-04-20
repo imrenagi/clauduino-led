@@ -4,7 +4,7 @@ CONTAINER ?= clauduino-mqtt
 TOPIC     ?= clauduino/led/status
 MSG       ?= task_complete
 
-.PHONY: help up down restart ps logs sub pub smoke clean
+.PHONY: help up down restart ps logs sub pub smoke clean trigger-stop trigger-subagent trigger-notify
 
 help: ## Show this help
 	@awk 'BEGIN {FS = ":.*?## "; printf "Targets:\n"} /^[a-zA-Z_-]+:.*?## / { printf "  \033[36m%-8s\033[0m %s\n", $$1, $$2 }' $(MAKEFILE_LIST)
@@ -41,6 +41,15 @@ smoke: ## End-to-end test: external pub -> broker -> subscriber
 	  echo "received: $$(cat /tmp/clauduino-smoke.out)"; \
 	  rm -f /tmp/clauduino-smoke.out; \
 	}
+
+trigger-stop: ## Simulate a Claude Stop event
+	docker exec $(CONTAINER) mosquitto_pub -h localhost -t 'clauduino/led/stop' -m ''
+
+trigger-subagent: ## Simulate a Claude SubagentStop event
+	docker exec $(CONTAINER) mosquitto_pub -h localhost -t 'clauduino/led/subagent_stop' -m ''
+
+trigger-notify: ## Simulate a Claude Notification event
+	docker exec $(CONTAINER) mosquitto_pub -h localhost -t 'clauduino/led/notification' -m ''
 
 clean: ## Stop broker and wipe runtime data/log
 	$(COMPOSE) down
