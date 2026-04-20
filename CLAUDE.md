@@ -62,6 +62,10 @@ docker run --rm eclipse-mosquitto:2.0 \
   -t 'clauduino/led/status' -m 'task_complete'
 ```
 
+## Conventions
+
+- **Commits:** always create commits via the `/commit` skill rather than crafting commit messages by hand. It keeps message style consistent across the project.
+
 ## Status
 
 - [x] Mosquitto broker in docker-compose, verified pub/sub round-trip
