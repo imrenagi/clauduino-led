@@ -5,7 +5,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "mosquitto_pub -h 127.0.0.1 -p 1883 -W 1 -q 0 -t clauduino/led/stop -m '' || true"
+            "command": "mosquitto_pub -h 127.0.0.1 -p 1883 -q 0 -t clauduino/led/stop -m '' || true"
           }
         ]
       }
@@ -15,7 +15,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "mosquitto_pub -h 127.0.0.1 -p 1883 -W 1 -q 0 -t clauduino/led/subagent_stop -m '' || true"
+            "command": "mosquitto_pub -h 127.0.0.1 -p 1883 -q 0 -t clauduino/led/subagent_stop -m '' || true"
           }
         ]
       }
@@ -25,7 +25,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "mosquitto_pub -h 127.0.0.1 -p 1883 -W 1 -q 0 -t clauduino/led/notification -m '' || true"
+            "command": "mosquitto_pub -h 127.0.0.1 -p 1883 -q 0 -t clauduino/led/notification -m '' || true"
           }
         ]
       }
