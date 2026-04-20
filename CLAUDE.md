@@ -75,17 +75,24 @@ Subscribe (inside the broker container):
 docker exec -it clauduino-mqtt mosquitto_sub -h localhost -t 'clauduino/#' -v
 ```
 
-Publish from another terminal:
+Publish from another terminal (the real hook sends the same shape — empty payload on one of the three `clauduino/led/<event>` topics):
 ```bash
-docker exec clauduino-mqtt mosquitto_pub -h localhost -t 'clauduino/led/status' -m 'task_complete'
+docker exec clauduino-mqtt mosquitto_pub -h localhost -t 'clauduino/led/stop' -m ''
 ```
 
 From a separate host/container (confirms the published host port works):
 ```bash
 docker run --rm eclipse-mosquitto:2.0 \
   mosquitto_pub -h host.docker.internal -p 1883 \
-  -t 'clauduino/led/status' -m 'task_complete'
+  -t 'clauduino/led/stop' -m ''
 ```
+
+## Hook behavior when the broker is down
+
+Each hook command ends with `|| true` so a failed `mosquitto_pub` can never fail a Claude turn. Practical cases:
+
+- **Broker stopped (`make down`).** `mosquitto_pub` gets ECONNREFUSED from the kernel in milliseconds on localhost; the hook returns almost instantly and Claude's UI is unaffected.
+- **Mac networking wedged / Docker daemon hung.** `mosquitto_pub` has no explicit connect timeout here (the `-W` flag, despite appearing in the original spec, is `mosquitto_sub`-only), so it can block for its default TCP connect timeout. If this ever bites you, wrap the command in `timeout 2 ...` (install via `brew install coreutils` if needed).
 
 ## Triggering animations manually
 
