@@ -31,18 +31,6 @@ void AnimationEngine::clear_() {
   fill_solid(leds_, NUM_LEDS, CRGB::Black);
 }
 
-void AnimationEngine::renderPlaceholder(CRGB color, unsigned long durationMs) {
-  unsigned long elapsed = millis() - startedAt_;
-  if (elapsed >= durationMs) {
-    clear_();
-    FastLED.show();
-    current_ = Event::None;
-    return;
-  }
-  fill_solid(leds_, NUM_LEDS, color);
-  FastLED.show();
-}
-
 // Stop: rainbow comet (length 8) chases head-to-tail, hue offset +120° per pass, 3 passes.
 void AnimationEngine::renderStop() {
   constexpr uint16_t STEP_MS     = 20;

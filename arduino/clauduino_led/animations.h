@@ -31,7 +31,6 @@ private:
   uint16_t step_ = 0;                // generic step counter
   uint8_t pass_ = 0;                 // used by chase animations
 
-  void renderPlaceholder(CRGB color, unsigned long durationMs);
   void renderStop();
   void renderSubagentStop();
   void renderNotification();
