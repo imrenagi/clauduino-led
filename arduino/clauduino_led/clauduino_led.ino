@@ -10,7 +10,7 @@ static CRGB leds[NUM_LEDS];
 static AnimationEngine engine;
 static constexpr uint8_t BUZZER_PIN = 8;        // D8
 static SongPlayer player;
-static constexpr const Song& SONG_FOR_STOP = HAPPY_BIRTHDAY;  // change me to swap songs
+static constexpr const Song& SONG_FOR_STOP = HIDUP_JOKOWI;  // change me to swap songs
 
 static WiFiClient wifiClient;
 static MqttClient mqttClient(wifiClient);
