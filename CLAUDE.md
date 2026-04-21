@@ -11,7 +11,7 @@ Claude Code (Stop/SubagentStop hook)
   MQTT broker (Mosquitto, this repo)
         │ subscribed by
         ▼
-  Arduino + LED strip
+  Arduino + LED strip + piezo buzzer
 ```
 
 - **Broker:** Eclipse Mosquitto 2.0 in Docker (this repo).
@@ -49,6 +49,7 @@ The hook wiring is already in `.claude/settings.json` and is picked up by Claude
 - 5 V PSU (≥ 3 A) for the strip, common ground with the Arduino
 - 220–470 Ω resistor in series on the data line, near the strip
 - 1000 µF electrolytic across the strip's 5V/GND, near LED #1
+- Passive piezo buzzer on `D8` (one lead to D8, other to GND) — plays the currently-bound song on Stop events
 
 Full wiring diagram, rationale for each passive, and a troubleshooting table are in [`docs/hardware.md`](docs/hardware.md).
 
@@ -105,6 +106,24 @@ make trigger-notify      # amber breathe ~5s
 ```
 
 Each publishes to `clauduino/led/<event>` with an empty payload — the same message Claude's hook sends.
+
+## Swapping the Stop song
+
+Songs live in `arduino/clauduino_led/songs.h` / `songs.cpp`. To change
+what plays on Stop:
+
+1. (If needed) add a new song in `songs.cpp` — a `const Note[]` array
+   plus a `Song` struct. Declare its `extern const Song NAME;` in
+   `songs.h`.
+2. In `arduino/clauduino_led/clauduino_led.ino`, change the one line:
+   ```cpp
+   static constexpr const Song& SONG_FOR_STOP = HAPPY_BIRTHDAY;
+   ```
+   to point at the new song.
+3. Re-upload the sketch from the Arduino IDE.
+
+To silence the buzzer entirely without removing hardware, comment out
+the `player.play(SONG_FOR_STOP)` call in `onMqttMessage()` and reupload.
 
 ## Conventions
 
