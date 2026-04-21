@@ -125,6 +125,8 @@ what plays on Stop:
 To silence the buzzer entirely without removing hardware, comment out
 the `player.play(SONG_FOR_STOP)` call in `onMqttMessage()` and reupload.
 
+**Retrigger behavior differs between LED and buzzer.** If Claude finishes twice in quick succession, the LED animation pre-empts (new rainbow chase from LED 0) while the buzzer ignores the retrigger and lets the current song finish. Over rapid turns you may see two or three rainbow chases but only one rendition of the song. This is intentional — a 12-second song that constantly restarts would be tiresome.
+
 ## Conventions
 
 - **Commits:** always create commits via the `/commit` skill rather than crafting commit messages by hand. It keeps message style consistent across the project.
