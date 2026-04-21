@@ -102,6 +102,30 @@ You can technically run without either and it'll often *look* fine on a short, l
 
 Uno R4 drives the data line at 3.3 V. WS2812 datasheets say DIN wants ≥ 0.7 · VCC = 3.5 V. In practice, most strips accept 3.3 V over short runs (< 30 cm), and just work. If you see unstable behavior specifically on longer runs or at the very start of the strip, add a 74AHCT125 (or similar) 3.3 V → 5 V buffer between D6's resistor and the strip's DIN. The chip is cheap, the fix is rock-solid, and it's worth having in the parts drawer.
 
+## Buzzer (piezo)
+
+A passive piezo buzzer plays compile-time-selected songs on Stop events.
+One lead of the buzzer goes to Arduino `D8`, the other to Arduino `GND`.
+That's it — no shared ground to worry about (the buzzer is powered
+directly from the pin, drawing < 10 mA).
+
+```
+Arduino D8 ─── piezo (+)
+Arduino GND ── piezo (–)
+```
+
+Optional: a 100–220 Ω resistor in series on the `D8` line to soften
+volume. Not needed to protect the pin — piezos draw negligible current.
+
+Arduino's `tone()` API uses one hardware timer and can play only one
+frequency at a time (no chords). `tone(pin, freq, duration)` is
+non-blocking — it programs the timer and returns immediately. The
+`SongPlayer` class in the firmware sequences notes by calling `tone()`
+once per note and advancing on a `millis()` timer.
+
+If the buzzer is unplugged, `tone()` on `D8` is a silent no-op and
+the firmware keeps running normally.
+
 ## Troubleshooting quick reference
 
 | Symptom | Likely cause |
