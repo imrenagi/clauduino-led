@@ -100,7 +100,7 @@ Each hook command ends with `|| true` so a failed `mosquitto_pub` can never fail
 Useful for iterating on the Arduino firmware without waiting for real Claude events:
 
 ```bash
-make trigger-stop        # rainbow chase ×3
+make trigger-stop        # rainbow chase ×6
 make trigger-subagent    # single cyan sweep
 make trigger-notify      # amber breathe ~5s
 ```

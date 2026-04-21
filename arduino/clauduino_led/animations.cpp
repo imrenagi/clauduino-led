@@ -37,7 +37,7 @@ void AnimationEngine::renderStop() {
   constexpr uint8_t  COMET_LEN   = 8;
   constexpr uint8_t  HUE_PER_LED = 21;   // ~30° in the 0-255 FastLED scale
   constexpr uint8_t  HUE_PER_PASS = 85;  // ~120°
-  constexpr uint8_t  TOTAL_PASSES = 3;
+  constexpr uint8_t  TOTAL_PASSES = 6;
 
   unsigned long now = millis();
   if (now - lastStep_ < STEP_MS) return;
