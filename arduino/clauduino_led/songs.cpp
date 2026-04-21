@@ -33,10 +33,34 @@ const Note HAPPY_BIRTHDAY_NOTES[] = {
   {F5, E}, {F5, E}, {E5, Q}, {C5, Q}, {D5, Q}, {C5, DH},
 };
 
+// Auto-extracted from hidup-jokowi.mp3 via scripts/mp3_to_song.py
+// (--fmin 150 --fmax 1000 --min-note-ms 80). Polyphonic source, so
+// pitches are approximations of the dominant melodic contour rather
+// than a clean transcription.
+const Note HIDUP_JOKOWI_NOTES[] = {
+  {  392,   93 },
+  {  311,  186 },
+  {  349,  255 },
+  {  330,   93 },
+  {  349,  209 },
+  {  466,  232 },
+  {  175,  116 },
+  {  392,  139 },
+  {  311,  139 },
+  {  175,  139 },
+  {  415,  163 },
+};
+
 }  // namespace
 
 const Song HAPPY_BIRTHDAY = {
   HAPPY_BIRTHDAY_NOTES,
   sizeof(HAPPY_BIRTHDAY_NOTES) / sizeof(Note),
   "Happy Birthday"
+};
+
+const Song HIDUP_JOKOWI = {
+  HIDUP_JOKOWI_NOTES,
+  sizeof(HIDUP_JOKOWI_NOTES) / sizeof(Note),
+  "Hidup Jokowi"
 };
