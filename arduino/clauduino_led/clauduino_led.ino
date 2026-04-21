@@ -3,9 +3,14 @@
 #include <FastLED.h>
 #include "arduino_secrets.h"
 #include "animations.h"
+#include "buzzer.h"
+#include "songs.h"
 
 static CRGB leds[NUM_LEDS];
 static AnimationEngine engine;
+static constexpr uint8_t BUZZER_PIN = 8;        // D8
+static SongPlayer player;
+static constexpr const Song& SONG_FOR_STOP = HAPPY_BIRTHDAY;  // change me to swap songs
 
 static WiFiClient wifiClient;
 static MqttClient mqttClient(wifiClient);
@@ -58,7 +63,10 @@ static void onMqttMessage(int messageSize) {
   Serial.print(F(" event="));
   Serial.println(static_cast<uint8_t>(e));
 
-  if (e != Event::None) engine.start(e);
+  if (e != Event::None) {
+    engine.start(e);
+    if (e == Event::Stop) player.play(SONG_FOR_STOP);
+  }
 }
 
 void setup() {
@@ -69,6 +77,7 @@ void setup() {
   FastLED.addLeds<WS2812B, DATA_PIN, GRB>(leds, NUM_LEDS);
   FastLED.setBrightness(96);          // conservative default; tune later
   engine.begin(leds);
+  player.begin(BUZZER_PIN);
 
   connectWiFi();
   mqttClient.onMessage(onMqttMessage);
@@ -80,4 +89,5 @@ void loop() {
   if (!mqttClient.connected())       { connectMQTT(); }
   mqttClient.poll();
   engine.tick();
+  player.tick();
 }
