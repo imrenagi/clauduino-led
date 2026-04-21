@@ -9,6 +9,8 @@ mosquitto/log/
 .idea/
 *.swp
 
+.venv/
+
 # Arduino-specific files (secrets, credentials)
 arduino/clauduino_led/arduino_secrets.h
 
