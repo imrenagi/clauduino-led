@@ -35,7 +35,14 @@ brew install mosquitto        # provides mosquitto_pub for the hook
 make up                       # start the broker
 ```
 
-The hook wiring is already in `.claude/settings.json` and is picked up by Claude Code automatically.
+Install the Claude Code hooks. They live in user scope so they fire from any project, not just this repo. Merge the contents of `.claude/settings.json.example` into `~/.claude/settings.json`, or copy the file outright if you don't have one yet:
+
+```bash
+# no user settings.json yet
+cp .claude/settings.json.example ~/.claude/settings.json
+
+# otherwise, merge the "hooks" block from the example into your existing file
+```
 
 **Arduino side:**
 1. In the Arduino IDE install the **Arduino UNO R4 Boards** package and the **ArduinoMqttClient** and **FastLED** libraries.
